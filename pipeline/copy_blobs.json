@@ -15,13 +15,17 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"url": {
-						"value": "@concat('https://',pipeline().globalParameters.SourceStorageAccountName,'.blob.core.windows.net/',pipeline().parameters.SourceContainerName,'?restype=container&comp=list&prefix=',pipeline().parameters.SourceFolderPrefix,'&delimiter=$SourceBlobDelimiter')",
-						"type": "Expression"
-					},
 					"method": "GET",
 					"headers": {
 						"x-ms-version": "2023-01-03"
+					},
+					"url": {
+						"value": "@concat('https://',pipeline().parameters.SourceStorageAccountName,'.blob.core.windows.net/',pipeline().parameters.SourceContainerName,'?restype=container&comp=list&prefix=',pipeline().parameters.SourceFolderPrefix,'&delimiter=$SourceBlobDelimiter')",
+						"type": "Expression"
+					},
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
 					},
 					"authentication": {
 						"type": "MSI",
@@ -61,66 +65,48 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "BinarySource",
+									"type": "ParquetSource",
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
 										"recursive": true,
-										"wildcardFolderPath": {
-											"value": "@item()",
-											"type": "Expression"
-										},
-										"deleteFilesAfterCompletion": false
+										"wildcardFolderPath": "source_folder",
+										"wildcardFileName": "*.parquet",
+										"enablePartitionDiscovery": false
 									},
 									"formatSettings": {
-										"type": "BinaryReadSettings"
+										"type": "ParquetReadSettings"
 									}
 								},
 								"sink": {
-									"type": "BinarySink",
+									"type": "ParquetSink",
 									"storeSettings": {
-										"type": "AzureBlobStorageWriteSettings"
+										"type": "AzureBlobStorageWriteSettings",
+										"copyBehavior": "PreserveHierarchy"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
 									}
 								},
-								"enableStaging": false
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
 							},
 							"inputs": [
 								{
-									"referenceName": "DynamicBlobStorage",
-									"type": "DatasetReference",
-									"parameters": {
-										"ServiceURI": {
-											"value": "@concat('https://',pipeline().globalParameters.SourceStorageAccountName,'.blob.core.windows.net')",
-											"type": "Expression"
-										},
-										"ContainerName": {
-											"value": "@pipeline().parameters.SourceContainerName",
-											"type": "Expression"
-										},
-										"FolderName": {
-											"value": "@coalesce(null)",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "Parquet1",
+									"type": "DatasetReference"
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "DynamicBlobStorage",
-									"type": "DatasetReference",
-									"parameters": {
-										"ServiceURI": {
-											"value": "@concat('https://',pipeline().parameters.SinkStorageAccountName,'.blob.core.windows.net')",
-											"type": "Expression"
-										},
-										"ContainerName": {
-											"value": "@pipeline().parameters.SinkContainerName",
-											"type": "Expression"
-										},
-										"FolderName": {
-											"value": "@pipeline().parameters.SinkFolderName",
-											"type": "Expression"
-										}
-									}
+									"referenceName": "Parquet1",
+									"type": "DatasetReference"
 								}
 							]
 						}
@@ -142,6 +128,9 @@
 				"type": "string"
 			},
 			"SinkFolderName": {
+				"type": "string"
+			},
+			"SourceStorageAccountName": {
 				"type": "string"
 			}
 		},
