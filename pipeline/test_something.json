@@ -32,7 +32,9 @@
 									"type": "ParquetSource",
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
-										"enablePartitionDiscovery": false
+										"recursive": true,
+										"enablePartitionDiscovery": false,
+										"prefix": "test"
 									},
 									"formatSettings": {
 										"type": "ParquetReadSettings"
