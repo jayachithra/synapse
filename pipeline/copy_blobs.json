@@ -69,9 +69,11 @@
 									"storeSettings": {
 										"type": "AzureBlobStorageReadSettings",
 										"recursive": true,
-										"wildcardFolderPath": "source_folder",
-										"wildcardFileName": "*.parquet",
-										"enablePartitionDiscovery": false
+										"wildcardFolderPath": {
+											"value": "@item()",
+											"type": "Expression"
+										},
+										"wildcardFileName": "*.parquet"
 									},
 									"formatSettings": {
 										"type": "ParquetReadSettings"
@@ -81,7 +83,7 @@
 									"type": "ParquetSink",
 									"storeSettings": {
 										"type": "AzureBlobStorageWriteSettings",
-										"copyBehavior": "PreserveHierarchy"
+										"copyBehavior": "FlattenHierarchy"
 									},
 									"formatSettings": {
 										"type": "ParquetWriteSettings"
@@ -99,14 +101,42 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "Parquet1",
-									"type": "DatasetReference"
+									"referenceName": "Binary",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServiceURI": {
+											"value": "@concat('https://',pipeline().parameters.SourceStorageAccountName,'.blob.core.windows.net')",
+											"type": "Expression"
+										},
+										"ContainerName": {
+											"value": "@pipeline().parameters.SourceContainerName",
+											"type": "Expression"
+										},
+										"FolderName": {
+											"value": "@pipeline().parameters.SourceFolderPrefix",
+											"type": "Expression"
+										}
+									}
 								}
 							],
 							"outputs": [
 								{
-									"referenceName": "Parquet1",
-									"type": "DatasetReference"
+									"referenceName": "Binary",
+									"type": "DatasetReference",
+									"parameters": {
+										"ServiceURI": {
+											"value": "@concat('https://',pipeline().parameters.SinkContainerName,'.blob.core.windows.net')",
+											"type": "Expression"
+										},
+										"ContainerName": {
+											"value": "@pipeline().parameters.SinkContainerName",
+											"type": "Expression"
+										},
+										"FolderName": {
+											"value": "@pipeline().parameters.SinkFolderName",
+											"type": "Expression"
+										}
+									}
 								}
 							]
 						}
