@@ -1,0 +1,19 @@
+{
+	"name": "DynamicBlobStorage",
+	"properties": {
+		"parameters": {
+			"ServiceURI": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"serviceEndpoint": "@{linkedService().ServiceURI}"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
