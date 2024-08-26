@@ -1,5 +1,5 @@
 {
-	"name": "Parquet1",
+	"name": "Binary",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "DynamicBlobStorage",
