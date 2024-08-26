@@ -1,0 +1,41 @@
+{
+	"name": "BinarySource",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "DynamicBlobStorage",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServiceURI": {
+					"value": "@dataset().ServiceURI",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"ServiceURI": {
+				"type": "string"
+			},
+			"ContainerName": {
+				"type": "string"
+			},
+			"FolderName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": {
+					"value": "@dataset().FolderName",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().ContainerName",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}
