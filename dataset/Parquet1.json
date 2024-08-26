@@ -2,15 +2,39 @@
 	"name": "Parquet1",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureBlobStorage1",
-			"type": "LinkedServiceReference"
+			"referenceName": "DynamicBlobStorage",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"ServiceURI": {
+					"value": "@dataset().ServiceURI",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"ServiceURI": {
+				"type": "String"
+			},
+			"ContainerName": {
+				"type": "string"
+			},
+			"FolderName": {
+				"type": "string"
+			}
 		},
 		"annotations": [],
 		"type": "Parquet",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"container": "sink"
+				"folderPath": {
+					"value": "@dataset().FolderName",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().ContainerName",
+					"type": "Expression"
+				}
 			},
 			"compressionCodec": "snappy"
 		},
